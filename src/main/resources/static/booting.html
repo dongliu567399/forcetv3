@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<button type="button" class="layui-btn" id="b1">booting_2</button>
+<button type="button" class="layui-btn" id="b2">booting_3</button>
+<ul id="content"></ul>
+</body>
+<script>
+    $("#b1").click(function () {
+        alert($("#b1").html());
+        $("#content").html("");
+        $.post("cale1", {type: $("#b1").html()}, function (data) {
+            $.each(data, function (id,option) {
+                $("#content").html('<li>' + id+":" + option.valueOf() + '</li>');
+            })
+        })
+    })
+    $("#b2").click(function () {
+        $("#content").html("");
+        $.post("cale1", {type: $("#b2").html()}, function (data) {
+            $.each(data, function (id,option) {
+                $("#content").html('<li>' + id+":" + option.valueOf() + '</li>')
+            })
+        })
+    })
+</script>
+</html>

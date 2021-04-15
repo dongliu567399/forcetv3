@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>解析日志页面</title>
+</head>
+<body>
+<font size="5" color="red">日志解析页面</font>
+<br/>
+<br/>
+<div class="row">
+    <div class="col-md-1 "><input type="file" name="fileName1" id="fileName1"/></div>
+    <div class="col-md-2 "><input class="btn btn-primary btn-xs" type="button" onclick="send('booting_2')" id="sendToUser2" value="booting_2" /> <input class="btn btn-primary btn-xs" type="button" onclick="send('booting_3')" id="sendToUser3" value="booting_3" /></div>
+</div>
+
+
+<span id="timespan">
+    上传中，请等待...&nbsp;&nbsp;&nbsp;已上传
+    <label id="time" th:size="3" ></label> 秒
+</span>
+
+<div id="show"></div>
+
+<script>
+    window.onload=function () {
+        $("#timespan").hide(0);
+    }
+        var a = 0;
+
+        function send(name){
+            var $file1 = $("input[name='fileName1']").val();
+            if ($file1 == "") {
+                alert("请选择上传的日志文件! ")
+                return false;
+            }
+            var fileName1 = $file1.substring($file1.lastIndexOf(".") + 1).toLowerCase();
+            if(fileName1 != "log"){
+                alert("请选择Log文件!");
+                return false;
+            }
+            var size1 = $("input[name='fileName1']")[0].files[0].size;
+            if (size1>1024000000) {         //先放行任意文件大小吧
+                alert("上传文件请小于100M!");
+                return false;
+            }
+
+            boo1 = true;
+            var type = "file";
+            var formData = new FormData();
+            formData.append(type,$("#fileName1")[0].files[0]);
+            formData.append("text",name);
+
+            alert("请耐心等待页面响应，请勿刷新当前页面！")
+
+            // $("#timespan").show(0);
+            // var zq = window.setInterval(f,1000);
+
+            $.ajax({
+                type : "post",
+                url : "/upload",
+                data : formData,
+                processData : false,
+                contentType : false,
+                success : function(data){
+                    if (data=="error") {
+                        alert("文件提交失败了!");
+                    }else{
+                        alert("恭喜！文件上传成功!");
+                        $("#timespan").hide(0);
+                        $("#show").append("· 00:"+data.o[0]+"<br/>"+
+                                            "· 01:"+data.o[1]+"<br/>"+
+                                            "· 02:"+data.o[2]+"<br/>"+
+                                            "· 03:"+data.o[3]+"<br/>"+
+                                            "· 04:"+data.o[4]+"<br/>"+
+                                            "· 05:"+data.o[5]+"<br/>"+
+                                            "· 06:"+data.o[6]+"<br/>"+
+                                            "· 07:"+data.o[7]+"<br/>"+
+                                            "· 08:"+data.o[8]+"<br/>"+
+                                            "· 09:"+data.o[9]+"<br/>"+
+                                            "· 10:"+data.o[10]+"<br/>"+
+                                            "· 11:"+data.o[11]+"<br/>"+
+                                            "· 12:"+data.o[12]+"<br/>"+
+                                            "· 13:"+data.o[13]+"<br/>"+
+                                            "· 14:"+data.o[14]+"<br/>"+
+                                            "· 15:"+data.o[15]+"<br/>"+
+                                            "· 16:"+data.o[16]+"<br/>"+
+                                            "· 17:"+data.o[17]+"<br/>"+
+                                            "· 18:"+data.o[18]+"<br/>"+
+                                            "· 19:"+data.o[19]+"<br/>"+
+                                            "· 20:"+data.o[20]+"<br/>"+
+                                            "· 21:"+data.o[21]+"<br/>"+
+                                            "· 22:"+data.o[22]+"<br/>"+
+                                            "· 23:"+data.o[23]+"<br/>"+
+                                            data.msg
+
+                    );
+                        clearTimeout(zq);
+                    }}
+            });
+
+            function f() {
+               a=a+1;
+               $("#time").text(a);
+            }
+    }
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
