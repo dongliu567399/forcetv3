@@ -1,34 +1,30 @@
 package mianshi.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.net.ConnectException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class UvCController {
     String fileName = "";
     String uploadFolder = "";
-
+    Map<String, Integer> result = new HashMap<>();
     @ResponseBody
     @RequestMapping("/UVCget")
-    public Map<String, Integer> cale1(String seat,String value1) {
-        System.out.println(value1);
+    public Map<String, Integer> cale1(String seat, String num4) {
+        System.out.println(seat);
+        System.out.println(num4);
         String filename1 = uploadFolder + System.getProperty("file.separator") + fileName;
-        Map<String, Integer> map = halder(filename1, seat, value1);
+        Map<String, Integer> map = halder(filename1, seat, num4);
         return map;
     }
 
-    public Map<String, Integer> halder(String fileName, String seat, String value1) {
-        Map<String, Integer> result = new HashMap<>();
+    public Map<String, Integer> halder(String fileName, String seat, String num4) {
         File file = new File(fileName);
         List<Integer> list = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
@@ -46,26 +42,55 @@ public class UvCController {
                 }
                 String[] booting3 = tempString.split(",");
                 String[] time = booting3[1].split(":");
-                String times = time[1]; //01
-//                if (time1.compareTo(times) )
-
-                    if (booting3[2] != null) {
-                        //如果map  key中不存在这个用户唯一码   就创建出来 默礽出现次数是0
-                        if (!map.containsKey(booting3[2])) {
-                            map.put(booting3[2], 0);
+                String[] num = num4.split(",");//前台传过来的时间段 接收 然后分隔，判断
+                if (seat.equals("1")) {
+                    for (int i = 0; i < num.length; i++) {//3
+                        if (i < 10) {
+                            num[i] = "0" + num[i];
                         }
-                        //如果已经存在   加1次  这样就算出每个用户唯一码出现的次数
-                        if (map.containsKey(booting3[2])) {
-                            int a = map.get(booting3[2]);
-                            map.put(booting3[2], a + 1);
+                        if (time[1].equals(num[i]) || time[1].equals(num[i]) || time[1].equals(num[i]) || time[1].equals(num[i])) {
+                            if (booting3[0].equals("booting_2.gif") || booting3[0].equals("booting_2.png") ||
+                                    booting3[0].equals("booting_2.jpg") || booting3[0].equals("hd_booting_2.jpg") || booting3[0].equals("hd_booting_2.png")) {
+                                if (booting3[2] != null) {
+                                    //如果map  key中不存在这个用户唯一码   就创建出来 默礽出现次数是0
+                                    if (!map.containsKey(booting3[2])) {
+                                        map.put(booting3[2], 0);
+                                    }
+                                    //如果已经存在   加1次  这样就算出每个用户唯一码出现的次数
+                                    if (map.containsKey(booting3[2])) {
+                                        int a = map.get(booting3[2]);
+                                        map.put(booting3[2], a + 1);
+                                    }
+                                }
+                            }
+                        }
+                        if (seat.equals("2")) {
+                            if (time[1].equals(num[i]) || time[1].equals(num[i]) || time[1].equals(num[i]) || time[1].equals(num[i])) {
+                                if (booting3[0].equals("booting_3.gif") || booting3[0].equals("booting_3.png") ||
+                                        booting3[0].equals("booting_3.jpg") || booting3[0].equals("hd_booting_3.jpg") || booting3[0].equals("hd_booting_3.png")) {
+                                    if (booting3[2] != null) {
+                                        //如果map  key中不存在这个用户唯一码   就创建出来 默礽出现次数是0
+                                        if (!map.containsKey(booting3[2])) {
+                                            map.put(booting3[2], 0);
+                                        }
+                                        //如果已经存在   加1次  这样就算出每个用户唯一码出现的次数
+                                        if (map.containsKey(booting3[2])) {
+                                            int a = map.get(booting3[2]);
+                                            map.put(booting3[2], a + 1);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
+                }
             }
 
             for (int i = 0; i < list.size(); i++) {
                 result.put(list.get(i) + "+", 0);
             }
             for (String key : map.keySet()) {
+//                System.out.println("---key" + key + "  Value :  " + map.get(key));
                 int a = map.get(key);
                 for (int i = 1; i <= a; i++) {
                     if (i > 20) {
@@ -85,6 +110,7 @@ public class UvCController {
         }
         return result;
     }
+
 
     @PostMapping("/UVCupload")
     public void upload(HttpServletRequest request, @RequestParam MultipartFile file) {

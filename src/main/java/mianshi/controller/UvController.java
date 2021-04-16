@@ -40,7 +40,6 @@ public class UvController {
                 if (booting3[2] != null) {
                     sum++;
                 }
-
             }
             System.out.println("sss------" + sum);
             bufferedReader.close();

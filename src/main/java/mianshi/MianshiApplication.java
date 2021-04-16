@@ -2,6 +2,7 @@ package mianshi;
 
 
 import jdk.nashorn.internal.parser.Parser;
+import mianshi.service.QualityComplainServices;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.mybatis.spring.annotation.MapperScan;
@@ -22,9 +23,8 @@ import java.util.stream.Collectors;
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class MianshiApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MianshiApplication.class, args);}
-
-
+        SpringApplication.run(MianshiApplication.class, args);
+    }
 //        String filepath = "C:\\Users\\DELL\\Desktop\\23.log";//文件地址
 //        File file = new File(filepath);
 //        List<Integer> list=new ArrayList<>();
