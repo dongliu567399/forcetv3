@@ -1,94 +1,274 @@
 package mianshi;
 
 
-import jdk.nashorn.internal.parser.Parser;
-import mianshi.service.QualityComplainServices;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.web.servlet.MultipartConfigFactory;
-import org.springframework.context.annotation.Bean;
+
+import org.springframework.data.redis.core.*;
 
 import javax.servlet.MultipartConfigElement;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @MapperScan("mianshi.mapper")
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 public class MianshiApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(MianshiApplication.class, args);
-    }
-//        String filepath = "C:\\Users\\DELL\\Desktop\\23.log";//文件地址
+
+//    @Autowired
+//    private RedisTemplate redisTemplate;
+//
+//    public void query() {
+//
+//        String filepath = "C:\\Users\\DELL\\Desktop\\aa\\成都-双流区.log";//文件地址
 //        File file = new File(filepath);
-//        List<Integer> list=new ArrayList<>();
-//        for (int i = 1; i <=20 ; i++) {
-//            list.add(i);
-//        }
 //        BufferedReader bufferedReader;
+//        String tempString = "";
 //        try {
 //            bufferedReader = new BufferedReader(new FileReader(file));
-//            String tempString = "";
-//            //创建一个map     KEY 是存 用户唯一码  value 存出现的次数
-//            Map<String, Integer> map = new HashMap<>();
 //            while ((tempString = bufferedReader.readLine()) != null) {
-//                if (tempString.equals("END")) {
-//                    continue;
-//                }
-//                String[] booting3 = tempString.split(",");
-//                if (booting3[2] != null) {
-//                    //如果map  key中不存在这个用户唯一码   就创建出来 默礽出现次数是0
-//                    if (!map.containsKey(booting3[2])) {
-//                        map.put(booting3[2], 0);
-//                    }
-//                    //如果已经存在   加1次  这样就算出每个用户唯一码出现的次数
-//                    if (map.containsKey(booting3[2])) {
-//                        int a = map.get(booting3[2]);
-//                        map.put(booting3[2], a + 1);
-//                    }
-//                }
+//                System.out.println(tempString);
+////                tempString = "aaaa / ," + tempString + "/," + d + "/,booting1";
+////                System.out.println(tempString);
+//                redisTemplate.opsForValue().set("aa", tempString);
 //            }
-//            Map <String,Integer> result= new HashMap<>();
-//            for (int i = 0; i <list.size() ; i++) {
-//                result.put(list.get(i)+"+",0);
-//            }
-//            for(String key:map.keySet()){
-//                int a=map.get(key);
-//                for (int i = 1; i <=a ; i++) {
-//                    if(i>20){
-//                        break;
-//                    }
-//                    int b=result.get(i+"+");
-//                    result.put(i+"+",b+1);
-//                }
-//            }
-//            for(String key:result.keySet()){
-//                System.out.println("---key"+key+"  value :  "+result.get(key));
-//            }
-//
-//            bufferedReader.close();
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-/*
+//
+//    }
 
-
-    public static Integer getMaxValue(Map<String, Integer> map) {
-        if (map == null)
-            return null;
-        int length =map.size();
-        Collection<Integer> c = map.values();
-        Object[] obj = c.toArray();
-        Arrays.sort(obj);
-        return Integer.parseInt(obj[length-1].toString());
+    public static void main(String[] args) {
+        SpringApplication.run(MianshiApplication.class, args);
     }
-}
+//        MianshiApplication m=new MianshiApplication();
+//        m.query();
+        //两个素材 一个uv 一共点击6次 1-5 2-4 3-3
+//        String filepath = "C:\\Users\\DELL\\Desktop\\aa\\成都-双流区.log";//文件地址
+//        File file = new File(filepath);
+//        BufferedReader bufferedReader;
+//        List<String> list = new ArrayList<>();
+//        list.add("aaaaaaa");
+//        list.add("bbbbbbb");
+//        try {
+//            Random r = new Random();
+//            int r1=r.nextInt(100) + 1;
 
- */
+//            Date date = new Date();
+//            SimpleDateFormat sdf = new SimpleDateFormat();
+//            sdf.applyPattern("yyyy,MM,dd");
+//            String d = sdf.format(date);
+//            String tempString = "";
+//            bufferedReader = new BufferedReader(new FileReader(file));
+//            while ((tempString = bufferedReader.readLine()) != null) {
+//                tempString = "aaaa / ," + tempString + "/," + d + "/,booting1";
+//                System.out.println(tempString);
+//            }
+//            for (int j = 0; j < 6; j++) {
+//
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+//    /**
+//     * 写入缓存
+//     *
+//     * @param key
+//     * @param value
+//     * @return
+//     */
+//    public boolean set(final String key, Object value) {
+//        boolean result = false;
+//        try {
+//            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+//            operations.set(key, value);
+//            result = true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+//
+//    /**
+//     * 写入缓存设置时效时间
+//     *
+//     * @param key
+//     * @param value
+//     * @return
+//     */
+//    public boolean set(final String key, Object value, Long expireTime, TimeUnit timeUnit) {
+//        boolean result = false;
+//        try {
+//            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+//            operations.set(key, value);
+//            redisTemplate.expire(key, expireTime, timeUnit);
+//            result = true;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+//
+//    /**
+//     * 批量删除对应的value
+//     *
+//     * @param keys
+//     */
+//    public void remove(final String... keys) {
+//        for (String key : keys) {
+//            remove(key);
+//        }
+//    }
+//
+//    /**
+//     * 批量删除key
+//     *
+//     * @param pattern
+//     */
+//    public void removePattern(final String pattern) {
+//        Set<Serializable> keys = redisTemplate.keys(pattern);
+//        if (keys.size() > 0) {
+//            redisTemplate.delete(keys);
+//        }
+//    }
+//
+//    /**
+//     * 删除对应的value
+//     *
+//     * @param key
+//     */
+//    public void remove(final String key) {
+//        if (exists(key)) {
+//            redisTemplate.delete(key);
+//        }
+//    }
+//
+//    /**
+//     * 判断缓存中是否有对应的value
+//     *
+//     * @param key
+//     * @return
+//     */
+//    public boolean exists(final String key) {
+//        return redisTemplate.hasKey(key);
+//    }
+//
+//    /**
+//     * 读取缓存
+//     *
+//     * @param key
+//     * @return
+//     */
+//    public Object get(final String key) {
+//        Object result = null;
+//        ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+//        result = operations.get(key);
+//        return result;
+//    }
+//
+//    /**
+//     * 哈希 添加
+//     *
+//     * @param key
+//     * @param hashKey
+//     * @param value
+//     */
+//    public void hmSet(String key, Object hashKey, Object value) {
+//        HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+//        hash.put(key, hashKey, value);
+//    }
+//
+//    /**
+//     * 哈希获取数据
+//     *
+//     * @param key
+//     * @param hashKey
+//     * @return
+//     */
+//    public Object hmGet(String key, Object hashKey) {
+//        HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+//        return hash.get(key, hashKey);
+//    }
+//
+//    /**
+//     * 列表添加
+//     *
+//     * @param k
+//     * @param v
+//     */
+//    public void lPush(String k, Object v) {
+//        ListOperations<String, Object> list = redisTemplate.opsForList();
+//        list.rightPush(k, v);
+//    }
+//
+//    /**
+//     * 列表获取
+//     *
+//     * @param k
+//     * @param l
+//     * @param l1
+//     * @return
+//     */
+//    public List<Object> lRange(String k, long l, long l1) {
+//        ListOperations<String, Object> list = redisTemplate.opsForList();
+//        return list.range(k, l, l1);
+//    }
+//
+//    /**
+//     * 集合添加
+//     *
+//     * @param key
+//     * @param value
+//     */
+//    public void add(String key, Object value) {
+//        SetOperations<String, Object> set = redisTemplate.opsForSet();
+//        set.add(key, value);
+//    }
+//
+//    /**
+//     * 集合获取
+//     *
+//     * @param key
+//     * @return
+//     */
+//    public Set<Object> setMembers(String key) {
+//        SetOperations<String, Object> set = redisTemplate.opsForSet();
+//        return set.members(key);
+//    }
+//
+//    /**
+//     * 有序集合添加
+//     *
+//     * @param key
+//     * @param value
+//     * @param scoure
+//     */
+//    public void zAdd(String key, Object value, double scoure) {
+//        ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
+//        zset.add(key, value, scoure);
+//    }
+//
+//    /**
+//     * 有序集合获取
+//     *
+//     * @param key
+//     * @param scoure
+//     * @param scoure1
+//     * @return
+//     */
+//    public Set<Object> rangeByScore(String key, double scoure, double scoure1) {
+//        ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
+//        return zset.rangeByScore(key, scoure, scoure1);
+//    }
 }
